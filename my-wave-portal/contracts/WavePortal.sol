@@ -9,7 +9,6 @@ contract WavePortal {
     string private contractName = "WavePortal."; // The `public` modifier makes a variable readable from outside the contract.
     uint totalWaves; // unassigned integers have initial values of 0 in solidity
     uint256 initialGas = gasleft();
-    address[] public userCount;
     mapping(address => uint) public waveMap;
 
     constructor() {
@@ -19,7 +18,6 @@ contract WavePortal {
     function wave() public { // has access to declared variable
         totalWaves += 1;
         console.log("%s is waved!", msg.sender );
-        userCount.push(msg.sender);
 
         // Saving the ammount of waves per user
         uint userWave = waveMap[msg.sender];
@@ -31,10 +29,6 @@ contract WavePortal {
     function getTotalWaves() public view returns (uint) {
         console.log("We have %d total waves", totalWaves);
         return totalWaves;
-    }
-
-    function getPastUsers() public view returns (uint) {
-       return userCount.length;
     }
 
     function getWavesPerUser(address userAddress) public view returns (uint) {

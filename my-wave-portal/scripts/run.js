@@ -19,13 +19,9 @@ const main = async () => {
 
   // The wave contract is connected to the random user and a wave() operation is concatenated to it.
   waveIncrement = await waveContract.connect(randomPerson).wave();
-  await waveContract.connect(randomPerson).wave();
   await waveIncrement.wait(); // Again, we wait for the transaction
 
   waveCount = await waveContract.getTotalWaves();
-
-  let getUsers = await waveContract.getPastUsers();
-  console.log(`Number of users: ${getUsers}`);
 
   await checkNumberOfWaves(waveContract, randomPerson.address);
 };
@@ -35,7 +31,7 @@ const checkNumberOfWaves = async (Contract, address) => {
   console.log({
     userWaveCount: {
       address,
-      waveCount: wavePerUser.toString(),
+      waveCount: wavePerUser.toString(), // .toString() parses from hex to numb
     },
   });
 };
