@@ -19,6 +19,9 @@ function App() {
         </button>
         <p></p>
       </div>
+      <footer>
+        <h4>Built with ⚡ by Juan Felipe Aranguren</h4>
+      </footer>
     </div>
   );
 }

@@ -33,9 +33,19 @@
   border-radius: 5px;
   font-size: 18px;
   width: 100%;
+  background-color: teal;
+  color: whitesmoke;
 }
 
 .waveButton:hover {
   background-color: teal;
   color: whitesmoke;
+}
+
+footer {
+  position: fixed;
+  text-align: center;
+  left: 0px;
+  bottom: 0px;
+  width: 100%;
 }
