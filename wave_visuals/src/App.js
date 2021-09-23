@@ -56,9 +56,12 @@ function App() {
           Ethereum wallet and wave at me!
         </div>
 
-        <button className='waveButton' onClick={wave}>
-          Wave at Me!
-        </button>
+        {currentAccount ? (
+          <button className='waveButton' onClick={wave}>
+            Wave at me!
+          </button>
+        ) : null}
+
         {currentAccount ? null : (
           <button className='waveButton' onClick={connectWallet}>
             Connect your Wallet
