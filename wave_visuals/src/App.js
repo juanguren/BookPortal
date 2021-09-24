@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
+  const [txnIsLoading, setTxnInProgress] = useState(false);
+  const [txnIsMined, setTxnCompleted] = useState(false);
+
   const contractAddress = '0xf44F14da5bCa5b02e4680CAb31051495A329dff3';
 
   const walletIsConnected = async () => {
@@ -51,8 +54,8 @@ function App() {
     const { ethereum: eth } = window;
     const waveABI = waveportal.abi;
     try {
-      const provider = new ethers.providers.Web3Provider(eth); // TODO: What's ethers provider
-      const signer = provider.getSigner(); // TODO: What's ethers signer
+      const provider = new ethers.providers.Web3Provider(eth); // a connection to the blockchain. Web3 interacts with the blockchain using the provider.
+      const signer = provider.getSigner(); // Is an account for signing the transaction. Can be used to sign messages and transactions
       // Connecting to our whole contract
       const waveContract = new ethers.Contract(
         contractAddress,
@@ -60,12 +63,35 @@ function App() {
         signer
       );
 
-      let count = await waveContract.getTotalWaves(); // Calling a particular method
-      console.log(`Total Wave count: ${count.toNumber()}`);
+      /**
+       * Here we execute the wave. This modifies the state, thus initiating a transaction
+       * 👇👇👇
+       */
+      const waveTxn = await waveContract.wave();
+      setTxnInProgress(true); // Only if metamask's pop-up gets accepted
+      console.log('Mining...');
+      await waveTxn.wait(); // Waits while the computation is executed by miners
+      console.log(`Mined -- ${waveTxn.hash}`);
+      /**
+       * 👆👆👆
+       */
+      if (waveTxn.hash) {
+        setTxnInProgress(false);
+        setTxnCompleted(true);
+
+        setTimeout(() => {
+          setTxnCompleted(false);
+        }, 5000);
+      }
+
+      let count = await waveContract.getTotalWaves(); // Total waves after transaction
+      console.log(`Total Wave count: ${count}`);
     } catch (error) {
       console.log(error); // TODO: Notification handler
+      setTxnCompleted(false);
     }
   };
+
   return (
     <div className='mainContainer'>
       <div className='dataContainer'>
@@ -73,14 +99,21 @@ function App() {
         <h1> I'm Juan </h1>
         <div className='bio'>
           I'm a Software Dev learning Blockchain development! Connect your
-          Ethereum wallet and wave at me!
+          Ethereum wallet and wave at me! 👋
         </div>
+        <form onClick={(e) => e.preventDefault()}>
+          {/*currentAccount ? (
+            <input type='text' className='waveText' placeholder='...'></input>
+          ) : null */}
+          {currentAccount ? (
+            <button className='waveButton' onClick={wave}>
+              Wave at me!
+            </button>
+          ) : null}
+        </form>
 
-        {currentAccount ? (
-          <button className='waveButton' onClick={wave}>
-            Wave at me!
-          </button>
-        ) : null}
+        {txnIsLoading ? <h4>Saving on the blockchain...</h4> : null}
+        {txnIsMined ? <h4>Received! Your transaction has been mined</h4> : null}
 
         {currentAccount ? null : (
           <button className='waveButton' onClick={connectWallet}>
