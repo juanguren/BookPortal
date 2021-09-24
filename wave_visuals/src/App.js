@@ -1,10 +1,12 @@
 import * as React from 'react';
-//import { ethers } from 'ethers';
+import { ethers } from 'ethers';
 import './App.css';
+import waveportal from './utils/wavePortal.json';
 import { useEffect, useState } from 'react';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
+  const contractAddress = '0xf44F14da5bCa5b02e4680CAb31051495A329dff3';
 
   const walletIsConnected = async () => {
     const { ethereum: eth } = window; // Injected by Metamask into the browser
@@ -45,7 +47,25 @@ function App() {
     walletIsConnected();
   }, []);
 
-  const wave = () => {};
+  const wave = async () => {
+    const { ethereum: eth } = window;
+    const waveABI = waveportal.abi;
+    try {
+      const provider = new ethers.providers.Web3Provider(eth); // TODO: What's ethers provider
+      const signer = provider.getSigner(); // TODO: What's ethers signer
+      // Connecting to our whole contract
+      const waveContract = new ethers.Contract(
+        contractAddress,
+        waveABI,
+        signer
+      );
+
+      let count = await waveContract.getTotalWaves(); // Calling a particular method
+      console.log(`Total Wave count: ${count.toNumber()}`);
+    } catch (error) {
+      console.log(error); // TODO: Notification handler
+    }
+  };
   return (
     <div className='mainContainer'>
       <div className='dataContainer'>
