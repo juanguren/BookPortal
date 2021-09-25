@@ -1,0 +1,19 @@
+.main {
+  margin: 1.5em;
+}
+
+.wave-results {
+  display: flex;
+  justify-content: center;
+  gap: 8em;
+}
+
+.wave-results div {
+  border: solid black 2px;
+  border-radius: 5px;
+  padding: 0px 2em;
+}
+
+.wave-results div h4 span {
+  color: crimson;
+}
