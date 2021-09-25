@@ -6,11 +6,12 @@
 }
 
 .dataContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   text-align: center;
   max-width: 600px;
+}
+
+.dataContainer h1 {
+  color: darkslategray;
 }
 
 .header {

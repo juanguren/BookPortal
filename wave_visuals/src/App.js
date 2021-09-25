@@ -3,27 +3,25 @@ import { ethers } from 'ethers';
 import './App.css';
 import waveportal from './utils/wavePortal.json';
 import { useEffect, useState } from 'react';
+import BookResults from './components/BookResults';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
   const [txnIsLoading, setTxnInProgress] = useState(false);
   const [txnIsMined, setTxnCompleted] = useState(false);
+  const [bookCount, setBookCount] = useState({});
 
   const contractAddress = '0xf44F14da5bCa5b02e4680CAb31051495A329dff3';
 
   const walletIsConnected = async () => {
     const { ethereum: eth } = window; // Injected by Metamask into the browser
     // TODO: Change this to a notification handler function. No alerts.
-    if (!eth) {
-      alert('Hey! Remember to install your Metamask wallet!');
-    } else {
-      console.log(eth);
-    }
+    if (eth) console.log({ ethereumObject: eth });
 
     const authorizedAccount = await eth.request({ method: 'eth_accounts' });
     if (authorizedAccount.length > 0) {
       const account = authorizedAccount[0];
-      setCurrentAccount(account); // Saves current account;
+      setCurrentAccount(account); // Saves current session's account;
       console.log(`Current account: ${account}`);
     } else {
       console.log('No authorized Metamask account');
@@ -62,7 +60,6 @@ function App() {
         waveABI,
         signer
       );
-
       /**
        * Here we execute the wave. This modifies the state, thus initiating a transaction
        * 👇👇👇
@@ -82,10 +79,16 @@ function App() {
         setTimeout(() => {
           setTxnCompleted(false);
         }, 5000);
-      }
 
-      let count = await waveContract.getTotalWaves(); // Total waves after transaction
-      console.log(`Total Wave count: ${count}`);
+        const bookCount = await waveContract.getTotalWaves(); // Total waves after transaction
+        const accountBookCount = await waveContract.getWavesPerUser(
+          currentAccount
+        );
+        setBookCount({
+          bookCount: bookCount.toString(),
+          accountBookCount: accountBookCount.toString(),
+        });
+      }
     } catch (error) {
       console.log(error); // TODO: Notification handler
       setTxnCompleted(false);
@@ -93,38 +96,43 @@ function App() {
   };
 
   return (
-    <div className='mainContainer'>
-      <div className='dataContainer'>
-        <div className='header'>Hey there! 🚀</div>
-        <h1> I'm Juan </h1>
-        <div className='bio'>
-          I'm a Software Dev learning Blockchain development! Connect your
-          Ethereum wallet and wave at me! 👋
-        </div>
-        <form onClick={(e) => e.preventDefault()}>
-          {/*currentAccount ? (
+    <div>
+      <div className='mainContainer'>
+        <div className='dataContainer'>
+          <div className='header'> Book Share 📖 </div>
+          <h1> Hi! I'm Juan 👋 </h1>
+          <div className='bio'>
+            I'm a Software Dev learning Blockchain development! Please connect
+            your Ethereum wallet and share your favorite book with me!
+          </div>
+          <form onClick={(e) => e.preventDefault()}>
+            {/*currentAccount ? (
             <input type='text' className='waveText' placeholder='...'></input>
           ) : null */}
-          {currentAccount ? (
-            <button className='waveButton' onClick={wave}>
-              Wave at me!
-            </button>
+            {currentAccount ? (
+              <button className='waveButton' onClick={wave}>
+                Wave at me!
+              </button>
+            ) : null}
+          </form>
+
+          {txnIsLoading ? <h4>Saving on the blockchain...</h4> : null}
+          {txnIsMined ? (
+            <h4>Received! Your transaction has been mined</h4>
           ) : null}
-        </form>
 
-        {txnIsLoading ? <h4>Saving on the blockchain...</h4> : null}
-        {txnIsMined ? <h4>Received! Your transaction has been mined</h4> : null}
-
-        {currentAccount ? null : (
-          <button className='waveButton' onClick={connectWallet}>
-            Connect your Wallet
-          </button>
-        )}
-        <p></p>
+          {currentAccount ? null : (
+            <button className='waveButton' onClick={connectWallet}>
+              Connect your Wallet
+            </button>
+          )}
+          <p></p>
+        </div>
+        <footer>
+          <h4>Built with ⚡ by Juan Felipe Aranguren</h4>
+        </footer>
       </div>
-      <footer>
-        <h4>Built with ⚡ by Juan Felipe Aranguren</h4>
-      </footer>
+      <BookResults books={bookCount ? bookCount : null} />
     </div>
   );
 }
