@@ -99,7 +99,7 @@ function App() {
     <div>
       <div className='mainContainer'>
         <div className='dataContainer'>
-          <div className='header'> Book Share 📖 </div>
+          <div className='header'> Book Portal 📖 </div>
           <h1> Hi! I'm Juan 👋 </h1>
           <div className='bio'>
             I'm a Software Dev learning Blockchain development! Please connect
@@ -111,14 +111,14 @@ function App() {
           ) : null */}
             {currentAccount ? (
               <button className='waveButton' onClick={wave}>
-                Wave at me!
+                Share book!
               </button>
             ) : null}
           </form>
 
-          {txnIsLoading ? <h4>Saving on the blockchain...</h4> : null}
+          {txnIsLoading ? <h4>Saving...</h4> : null}
           {txnIsMined ? (
-            <h4>Received! Your transaction has been mined</h4>
+            <h4>Received! Your book has been recorded on the blockchain!</h4>
           ) : null}
 
           {currentAccount ? null : (
