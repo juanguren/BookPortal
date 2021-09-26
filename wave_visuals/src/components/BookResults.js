@@ -1,12 +1,9 @@
 import React from 'react';
 import './styles/BookResults.css';
-import { useEffect } from 'react';
 
 function BookResults(props) {
   const { bookCount, accountBookCount } = props.books;
-  useEffect(() => {
-    console.log(props.books);
-  });
+
   return (
     <div className='main'>
       {bookCount ? (
