@@ -10,6 +10,7 @@ function App() {
   const [txnIsLoading, setTxnInProgress] = useState(false);
   const [txnIsMined, setTxnCompleted] = useState(false);
   const [bookCount, setBookCount] = useState({});
+  const [bookTxnHash, setBookTxnHash] = useState('');
 
   const contractAddress = '0xf44F14da5bCa5b02e4680CAb31051495A329dff3';
 
@@ -68,6 +69,7 @@ function App() {
       setTxnInProgress(true); // Only if metamask's pop-up gets accepted
       console.log('Mining...');
       await waveTxn.wait(); // Waits while the computation is executed by miners
+      setBookTxnHash(waveTxn.hash);
       console.log(`Mined -- ${waveTxn.hash}`);
       /**
        * 👆👆👆
@@ -78,7 +80,7 @@ function App() {
 
         setTimeout(() => {
           setTxnCompleted(false);
-        }, 5000);
+        }, 7000);
 
         const bookCount = await waveContract.getTotalWaves(); // Total waves after transaction
         const accountBookCount = await waveContract.getWavesPerUser(
@@ -111,14 +113,23 @@ function App() {
           ) : null */}
             {currentAccount ? (
               <button className='waveButton' onClick={wave}>
-                Share book!
+                Share Book!
               </button>
             ) : null}
           </form>
 
           {txnIsLoading ? <h4>Saving...</h4> : null}
           {txnIsMined ? (
-            <h4>Received! Your book has been recorded on the blockchain!</h4>
+            <div>
+              <h4>Received! Your book has been recorded on the blockchain!</h4>
+              <a
+                href={`https://rinkeby.etherscan.io/tx/${bookTxnHash}`}
+                target='_blank'
+                rel='noreferrer'
+              >
+                <h4>Check it out!</h4>
+              </a>
+            </div>
           ) : null}
 
           {currentAccount ? null : (
