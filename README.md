@@ -1,6 +1,7 @@
-# Building and learning web3 in public!
+# Book Portal ⚡
+Share books on the Blockchain!
 
-## [Check it out on IPFS!](https://ipfs.fleek.co/ipfs/QmfHsUJSoyKJfWBsViVdtQY1dLqrpa3G885te7FkXadADx/)
+## Stack 
 
 - Solidity
 - Node
