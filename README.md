@@ -7,5 +7,7 @@ Share books on the Blockchain!
 - Node
 - React
 - Hardhat
+- Metamask
+- Ethers.js
 - Alchemy
 - IPFS
