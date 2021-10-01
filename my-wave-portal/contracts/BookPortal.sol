@@ -6,21 +6,20 @@ import "hardhat/console.sol";
 import "./structs/Book.sol";
 
 contract BookPortal {
-    // state elements
-    string private contractName = "BookPortal."; 
+    // state elements 
     uint256 totalBooks; 
     mapping(address => uint256) public bookMap;
 
     // Event declared
-    event NewBook(address indexed sender, uint256 timestamp, string message);
+    event NewBook(address indexed sender, uint256 timestamp, string book_name);
 
     Book[] public books;
 
     constructor() {
-        console.log("Hey! This is", contractName);
+        console.log("Hello! This is BookPortal!");
     }
 
-    function shareBook(string memory message) public {
+    function shareBook(string memory book_name) public {
         totalBooks += 1;
 
         // Save the ammount of books per user
@@ -29,17 +28,21 @@ contract BookPortal {
         bookMap[msg.sender] = userBook;
 
         // Save user-generated message as struct
-        books.push(Book(msg.sender, message, block.timestamp));
+        books.push(Book(msg.sender, book_name, block.timestamp));
 
         // Event emitted: Data is propagated to be stored on transaction logs
-        emit NewBook(msg.sender, block.timestamp, message);
+        emit NewBook(msg.sender, block.timestamp, book_name);
     }
 
-    function getTotalBooks() public view returns (uint256, Book[] memory) {
-        return (totalBooks, books);
+    function getTotalBookData() public view returns (Book[] memory) {
+        return books; 
     }
 
-    function getBooksPerUser(address userAddress) public view returns (uint) {
+    function getTotalBookCount() public view returns (uint256) {
+        return totalBooks;
+    }
+
+    function getBookCountPerUser(address userAddress) public view returns (uint256) {
         return bookMap[userAddress];
     }
 }
