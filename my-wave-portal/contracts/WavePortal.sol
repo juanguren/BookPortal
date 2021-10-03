@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 
-contract WavePortal {
+contract WavePortal { // 0xf44F14da5bCa5b02e4680CAb31051495A329dff3
     // state variables
     string private contractName = "WavePortal."; // The `public` modifier makes a variable readable from outside the contract.
     uint totalWaves; // unassigned integers have initial values of 0 in solidity
