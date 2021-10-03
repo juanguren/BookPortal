@@ -13,7 +13,8 @@ contract BookPortal {
     // Event declared
     event NewBook(address indexed sender, uint256 timestamp, string book_name);
 
-    Book[] public books;
+    Book[] public books; // Struct-like array
+    mapping (address => Book) public book_database; // Struct-like map (searchable)
 
     constructor() {
         console.log("Hello! This is BookPortal!");
@@ -26,7 +27,11 @@ contract BookPortal {
         uint userBook = bookMap[msg.sender];
         userBook += 1;
         bookMap[msg.sender] = userBook;
+        
+        this.handleBookRecords(book_name);
+    }
 
+    function handleBookRecords(string memory book_name) public {
         // Save user-generated message as struct
         books.push(Book(msg.sender, book_name, block.timestamp));
 
