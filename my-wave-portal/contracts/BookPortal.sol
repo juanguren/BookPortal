@@ -14,7 +14,6 @@ contract BookPortal {
     event NewBook(address indexed sender, uint256 timestamp, string book_name);
 
     Book[] public books; // Struct-like array
-    mapping (address => Book) public book_database; // Struct-like map (searchable)
 
     constructor() {
         console.log("Hello! This is BookPortal!");
