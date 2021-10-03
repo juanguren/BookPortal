@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ethers } from 'ethers';
 import './App.css';
-import waveportal from './utils/wavePortal.json';
+import bookPortal from './utils/bookPortal.json';
 import { useEffect, useState } from 'react';
 import BookResults from './components/BookResults';
+import connectContract from './modules/contractConnection';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
@@ -12,7 +12,7 @@ function App() {
   const [bookCount, setBookCount] = useState({});
   const [bookTxnHash, setBookTxnHash] = useState('');
 
-  const contractAddress = '0xf44F14da5bCa5b02e4680CAb31051495A329dff3';
+  const contractAddress = '0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07';
 
   const walletIsConnected = async () => {
     const { ethereum: eth } = window; // Injected by Metamask into the browser
@@ -49,32 +49,20 @@ function App() {
     walletIsConnected();
   }, []);
 
-  const wave = async () => {
+  const shareBook = async () => {
     const { ethereum: eth } = window;
-    const waveABI = waveportal.abi;
+    const bookABI = bookPortal.abi;
     try {
-      const provider = new ethers.providers.Web3Provider(eth); // a connection to the blockchain. Web3 interacts with the blockchain using the provider.
-      const signer = provider.getSigner(); // Is an account for signing the transaction. Can be used to sign messages and transactions
-      // Connecting to our whole contract
-      const waveContract = new ethers.Contract(
-        contractAddress,
-        waveABI,
-        signer
-      );
-      /**
-       * Here we execute the wave. This modifies the state, thus initiating a transaction
-       * 👇👇👇
-       */
-      const waveTxn = await waveContract.wave();
+      const bookContract = await connectContract(eth, contractAddress, bookABI);
+
+      const bookTxn = await bookContract.shareBook('Ficciones');
       setTxnInProgress(true); // Only if metamask's pop-up gets accepted
       console.log('Mining...');
-      await waveTxn.wait(); // Waits while the computation is executed by miners
-      setBookTxnHash(waveTxn.hash);
-      console.log(`Mined -- ${waveTxn.hash}`);
-      /**
-       * 👆👆👆
-       */
-      if (waveTxn.hash) {
+      await bookTxn.wait(); // Waits while the computation is executed by miners
+      setBookTxnHash(bookTxn.hash);
+      console.log(`Mined -- ${bookTxn.hash}`);
+
+      if (bookTxn.hash) {
         setTxnInProgress(false);
         setTxnCompleted(true);
 
@@ -82,13 +70,16 @@ function App() {
           setTxnCompleted(false);
         }, 7000);
 
-        const bookCount = await waveContract.getTotalWaves(); // Total waves after transaction
-        const accountBookCount = await waveContract.getWavesPerUser(
+        const bookCount = await bookContract.getTotalBookCount();
+        const accountBookCount = await bookContract.getBookCountPerUser(
           currentAccount
         );
+        const getAllBooks = await bookContract.getTotalBookData();
+
         setBookCount({
           bookCount: bookCount.toString(),
-          accountBookCount: accountBookCount.toString(),
+          userBookCount: accountBookCount.toString(),
+          savedBooks: getAllBooks,
         });
       }
     } catch (error) {
@@ -112,7 +103,7 @@ function App() {
             <input type='text' className='waveText' placeholder='...'></input>
           ) : null */}
             {currentAccount ? (
-              <button className='waveButton' onClick={wave}>
+              <button className='waveButton' onClick={shareBook}>
                 Share Book!
               </button>
             ) : null}
