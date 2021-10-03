@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./structs/Book.sol";
 
-contract BookPortal {
+contract BookPortal { // 0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07
     // state elements 
     uint256 totalBooks; 
     mapping(address => uint256) public bookMap;
