@@ -52,10 +52,11 @@ function App() {
   const shareBook = async () => {
     const { ethereum: eth } = window;
     const bookABI = bookPortal.abi;
+    const savedBooks = [];
     try {
       const bookContract = await connectContract(eth, contractAddress, bookABI);
 
-      const bookTxn = await bookContract.shareBook('Ficciones');
+      const bookTxn = await bookContract.shareBook('The Shell Collector');
       setTxnInProgress(true); // Only if metamask's pop-up gets accepted
       console.log('Mining...');
       await bookTxn.wait(); // Waits while the computation is executed by miners
@@ -75,11 +76,18 @@ function App() {
           currentAccount
         );
         const getAllBooks = await bookContract.getTotalBookData();
+        getAllBooks.forEach((book) => {
+          savedBooks.push({
+            address: book.sender,
+            name: book.book_name,
+            timestamp: new Date(book.timestamp * 1000),
+          });
+        });
 
         setBookCount({
           bookCount: bookCount.toString(),
           userBookCount: accountBookCount.toString(),
-          savedBooks: getAllBooks,
+          savedBooks,
         });
       }
     } catch (error) {
