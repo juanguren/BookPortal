@@ -3,7 +3,7 @@ import bookPortal from '../utils/bookPortal.json';
 
 const contractAddress = '0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07';
 
-const connection = async (address) => {
+const connection = async () => {
   const { ethereum: eth } = window;
   const { abi } = bookPortal;
   try {
@@ -12,7 +12,7 @@ const connection = async (address) => {
     // Account for signing the transaction. Can be used to sign messages and transactions
     const signer = provider.getSigner();
     // Connecting to our whole contract
-    return new ethers.Contract(address, abi, signer);
+    return new ethers.Contract(contractAddress, abi, signer);
   } catch (error) {
     return error;
   }
