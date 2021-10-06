@@ -1,9 +1,8 @@
 import * as React from 'react';
 import './App.css';
-import bookPortal from './utils/bookPortal.json';
 import { useEffect, useState } from 'react';
 import BookResults from './components/BookResults';
-import connectContract from './modules/contractConnection';
+import { connection } from './modules/contract';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
@@ -11,21 +10,39 @@ function App() {
   const [txnIsMined, setTxnCompleted] = useState(false);
   const [bookCount, setBookCount] = useState({});
   const [bookTxnHash, setBookTxnHash] = useState('');
+  const [sharedBooks, setSharedBooks] = useState(0);
+  const [personalBooks, setPersonalBooks] = useState(0);
 
-  const contractAddress = '0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07';
+  const retrieveBookTotals = async () => {
+    try {
+      const bookContract = await connection();
+      const bookCount = await bookContract.getTotalBookCount();
+      const accountBookCount = await bookContract.getBookCountPerUser(
+        currentAccount
+      );
+
+      setPersonalBooks(accountBookCount.toString());
+      setSharedBooks(bookCount.toString());
+    } catch (error) {
+      console.log({ error });
+    }
+  };
 
   const walletIsConnected = async () => {
     const { ethereum: eth } = window; // Injected by Metamask into the browser
     // TODO: Change this to a notification handler function. No alerts.
     if (eth) console.log({ ethereumObject: eth });
 
-    const authorizedAccount = await eth.request({ method: 'eth_accounts' });
-    if (authorizedAccount.length > 0) {
-      const account = authorizedAccount[0];
-      setCurrentAccount(account); // Saves current session's account;
-      console.log(`Current account: ${account}`);
-    } else {
-      console.log('No authorized Metamask account');
+    try {
+      const authorizedAccount = await eth.request({ method: 'eth_accounts' });
+      if (authorizedAccount.length > 0) {
+        const account = authorizedAccount[0];
+        setCurrentAccount(account); // Saves current session's account;
+      } else {
+        console.log('No authorized Metamask account');
+      }
+    } catch (error) {
+      console.log({ error });
     }
   };
 
@@ -47,16 +64,17 @@ function App() {
 
   useEffect(() => {
     walletIsConnected();
-  }, []);
+    retrieveBookTotals();
+  });
 
   const shareBook = async () => {
-    const { ethereum: eth } = window;
-    const bookABI = bookPortal.abi;
     const savedBooks = [];
     try {
-      const bookContract = await connectContract(eth, contractAddress, bookABI);
+      const bookContract = await connection();
 
-      const bookTxn = await bookContract.shareBook('The Shell Collector');
+      const bookTxn = await bookContract.shareBook(
+        'To Sleep In a Sea of Stars'
+      );
       setTxnInProgress(true); // Only if metamask's pop-up gets accepted
       console.log('Mining...');
       await bookTxn.wait(); // Waits while the computation is executed by miners
@@ -71,10 +89,6 @@ function App() {
           setTxnCompleted(false);
         }, 7000);
 
-        const bookCount = await bookContract.getTotalBookCount();
-        const accountBookCount = await bookContract.getBookCountPerUser(
-          currentAccount
-        );
         const getAllBooks = await bookContract.getTotalBookData();
         getAllBooks.forEach((book) => {
           savedBooks.push({
@@ -85,8 +99,7 @@ function App() {
         });
 
         setBookCount({
-          bookCount: bookCount.toString(),
-          userBookCount: accountBookCount.toString(),
+          currentAccount,
           savedBooks,
         });
       }
@@ -106,10 +119,24 @@ function App() {
             I'm a Software Dev learning Blockchain development! Please connect
             your Ethereum wallet and share your favorite book with me!
           </div>
+          {currentAccount ? (
+            <div className='book-results'>
+              <div>
+                <h4>
+                  Total Books: <span> {sharedBooks} </span>
+                </h4>
+              </div>
+              <div>
+                <h4>
+                  Your Books: <span> {personalBooks} </span>
+                </h4>
+              </div>
+            </div>
+          ) : null}
           <form onClick={(e) => e.preventDefault()}>
-            {/*currentAccount ? (
-            <input type='text' className='waveText' placeholder='...'></input>
-          ) : null */}
+            {currentAccount ? (
+              <input type='text' className='waveText' placeholder='...'></input>
+            ) : null}
             {currentAccount ? (
               <button className='waveButton' onClick={shareBook}>
                 Share Book!
@@ -138,11 +165,11 @@ function App() {
           )}
           <p></p>
         </div>
-        <footer>
-          <h4>Built with ⚡ by Juan Felipe Aranguren</h4>
-        </footer>
       </div>
-      <BookResults books={bookCount ? bookCount : null} />
+      <footer>
+        <h4>Built with ⚡ by Juan Felipe Aranguren</h4>
+      </footer>
+      <BookResults props={bookCount ? bookCount : null} />
     </div>
   );
 }
