@@ -8,12 +8,14 @@ function App() {
   const [currentAccount, setCurrentAccount] = useState('');
   const [txnIsLoading, setTxnInProgress] = useState(false);
   const [txnIsMined, setTxnCompleted] = useState(false);
-  const [bookCount, setBookCount] = useState({});
+  const [bookTotals, setBookTotals] = useState(null);
   const [bookTxnHash, setBookTxnHash] = useState('');
   const [sharedBooks, setSharedBooks] = useState(0);
   const [personalBooks, setPersonalBooks] = useState(0);
+  const [bookName, setBookName] = useState('');
 
   const retrieveBookTotals = async () => {
+    const savedBooks = [];
     try {
       const bookContract = await connection();
       const bookCount = await bookContract.getTotalBookCount();
@@ -21,8 +23,18 @@ function App() {
         currentAccount
       );
 
-      setPersonalBooks(accountBookCount.toString());
+      const getAllBooks = await bookContract.getTotalBookData();
+      getAllBooks.forEach((book) => {
+        savedBooks.push({
+          address: book.sender,
+          name: book.book_name,
+          timestamp: new Date(book.timestamp * 1000),
+        });
+      });
+
       setSharedBooks(bookCount.toString());
+      setPersonalBooks(accountBookCount.toString());
+      setBookTotals({ currentAccount, savedBooks });
     } catch (error) {
       console.log({ error });
     }
@@ -31,7 +43,6 @@ function App() {
   const walletIsConnected = async () => {
     const { ethereum: eth } = window; // Injected by Metamask into the browser
     // TODO: Change this to a notification handler function. No alerts.
-    if (eth) console.log({ ethereumObject: eth });
 
     try {
       const authorizedAccount = await eth.request({ method: 'eth_accounts' });
@@ -39,7 +50,7 @@ function App() {
         const account = authorizedAccount[0];
         setCurrentAccount(account); // Saves current session's account;
       } else {
-        console.log('No authorized Metamask account');
+        console.log({ connectionStatus: 'No authorized Metamask account' });
       }
     } catch (error) {
       console.log({ error });
@@ -48,13 +59,13 @@ function App() {
 
   const connectWallet = async () => {
     const { ethereum: eth } = window;
-    if (!eth) return alert('Get Metamask!'); // TODO: Notification handler
+    if (!eth) return alert('Remember to install Metamask Wallet!'); // TODO: Notification handler
     try {
       const accountRequest = await eth.request({
         method: 'eth_requestAccounts',
       });
       const accountToUse = accountRequest[0];
-      console.log(`Connected! ${accountToUse}`);
+      console.log({ connectionStatus: `Connected! ${accountToUse}` });
 
       setCurrentAccount(accountToUse);
     } catch (error) {
@@ -67,14 +78,11 @@ function App() {
     retrieveBookTotals();
   });
 
-  const shareBook = async () => {
-    const savedBooks = [];
+  const shareBook = async (e) => {
+    e.preventDefault();
     try {
       const bookContract = await connection();
-
-      const bookTxn = await bookContract.shareBook(
-        'To Sleep In a Sea of Stars'
-      );
+      const bookTxn = await bookContract.shareBook(bookName);
       setTxnInProgress(true); // Only if metamask's pop-up gets accepted
       console.log('Mining...');
       await bookTxn.wait(); // Waits while the computation is executed by miners
@@ -84,24 +92,11 @@ function App() {
       if (bookTxn.hash) {
         setTxnInProgress(false);
         setTxnCompleted(true);
+        setBookName('');
 
         setTimeout(() => {
           setTxnCompleted(false);
         }, 7000);
-
-        const getAllBooks = await bookContract.getTotalBookData();
-        getAllBooks.forEach((book) => {
-          savedBooks.push({
-            address: book.sender,
-            name: book.book_name,
-            timestamp: new Date(book.timestamp * 1000),
-          });
-        });
-
-        setBookCount({
-          currentAccount,
-          savedBooks,
-        });
       }
     } catch (error) {
       console.log(error); // TODO: Notification handler
@@ -133,28 +128,37 @@ function App() {
               </div>
             </div>
           ) : null}
-          <form onClick={(e) => e.preventDefault()}>
-            {currentAccount ? (
-              <input type='text' className='waveText' placeholder='...'></input>
-            ) : null}
-            {currentAccount ? (
-              <button className='waveButton' onClick={shareBook}>
+
+          {currentAccount ? (
+            <form onSubmit={shareBook}>
+              <input
+                type='text'
+                className='waveText'
+                placeholder='book here'
+                value={bookName}
+                onChange={(e) => setBookName(e.target.value)}
+              ></input>
+              <button type='submit' className='waveButton'>
                 Share Book!
               </button>
-            ) : null}
-          </form>
+            </form>
+          ) : null}
 
           {txnIsLoading ? <h4>Saving...</h4> : null}
           {txnIsMined ? (
             <div>
-              <h4>Received! Your book has been recorded on the blockchain!</h4>
-              <a
-                href={`https://rinkeby.etherscan.io/tx/${bookTxnHash}`}
-                target='_blank'
-                rel='noreferrer'
-              >
-                <h4>Check it out!</h4>
-              </a>
+              <h4>
+                Received! Your book has been{' '}
+                <a
+                  href={`https://rinkeby.etherscan.io/tx/${bookTxnHash}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  id='etherscan_link'
+                >
+                  recorded
+                </a>{' '}
+                on the blockchain!
+              </h4>
             </div>
           ) : null}
 
@@ -169,7 +173,7 @@ function App() {
       <footer>
         <h4>Built with ⚡ by Juan Felipe Aranguren</h4>
       </footer>
-      <BookResults props={bookCount ? bookCount : null} />
+      {bookTotals ? <BookResults data={bookTotals} /> : null}
     </div>
   );
 }
