@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
-import bookPortal from '../utils/bookPortal.json';
+import config from '../utils/contract_config.json';
 
 const contractAddress = '0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07';
 
 const connection = async () => {
   const { ethereum: eth } = window;
-  const { abi } = bookPortal;
+  const { abi } = config;
   try {
     // A connection to the blockchain. Web3 interacts with the blockchain using the provider.
     const provider = new ethers.providers.Web3Provider(eth);
