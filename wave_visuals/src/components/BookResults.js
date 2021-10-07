@@ -1,23 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './styles/BookResults.css';
 
+/* // TODO: Evaluate IPFS to store:
+ * Data: js.ipfs.io
+ */
 function BookResults(props) {
-  const { bookCount, accountBookCount } = props.books;
+  const { savedBooks } = props.data;
 
   return (
     <div className='main'>
-      {bookCount ? (
-        <div className='wave-results'>
-          <div>
-            <h4>
-              Your Books: <span> {accountBookCount} </span>
-            </h4>
-          </div>
-          <div>
-            <h4>
-              Total Books: <span> {bookCount} </span>
-            </h4>
-          </div>
+      {savedBooks ? (
+        <div id='book-data-complete'>
+          {savedBooks.map((book, index) => {
+            return (
+              <ul key={index}>
+                <li>Address: {book.address}</li>
+                <li style={{ fontWeight: 'bold' }}>Book Name: {book.name}</li>
+                <li>Shared on: {book.timestamp.toString()}</li>
+              </ul>
+            );
+          })}
         </div>
       ) : null}
     </div>

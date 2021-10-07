@@ -26,13 +26,31 @@
   margin-top: 1em;
 }
 
-.waveText {
+.book-results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5em;
   margin-top: 2em;
-  padding: 1.5em;
+}
+
+.book-results div {
+  border: solid black 2px;
+  border-radius: 5px;
+  padding: 0px 2em;
+}
+
+.book-results div h4 span {
+  color: crimson;
+}
+
+.waveText {
+  margin-top: 2.5em;
+  padding: 1em;
   width: 70%;
   border: black solid 1px;
   text-align: justify;
-  font-size: 10px;
+  font-size: 18px;
 }
 
 .waveButton {
@@ -46,8 +64,22 @@
 }
 
 .waveButton:hover {
-  background-color: teal;
+  background: #667db6;
+  background: -webkit-linear-gradient(
+    to right,
+    #667db6,
+    #0082c8,
+    #0082c8,
+    #667db6
+  );
+  background: linear-gradient(to right, #667db6, #0082c8, #0082c8, #667db6);
+  font-weight: bold;
   color: whitesmoke;
+}
+
+#etherscan_link {
+  text-decoration: none;
+  color: #667db6;
 }
 
 footer {
@@ -56,4 +88,5 @@ footer {
   left: 0px;
   bottom: 0px;
   width: 100%;
+  background-color: white;
 }
