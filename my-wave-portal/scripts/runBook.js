@@ -1,3 +1,5 @@
+const { testComplementMethods } = require('./modules/book_methods');
+
 const main = async () => {
   const bookContractFactory = await hre.ethers.getContractFactory('BookPortal');
   const bookContract = await bookContractFactory.deploy();
@@ -15,19 +17,7 @@ const main = async () => {
     .shareBook('La Ciudad de las Bestias');
   randomBook.wait();
 
-  // * Method 1
-  let totalBooks = await bookContract.getTotalBookData();
-  totalBooks.map((book) => {
-    console.log({ title: book.book_name });
-  });
-
-  // * Method 2
-  const totalOfBooks = await bookContract.getTotalBookCount();
-  console.log({ totalOfBooks: totalOfBooks.toString() });
-
-  // * Method 3
-  const userBookCount = await bookContract.getBookCountPerUser(owner.address);
-  console.log({ userBookCount: userBookCount.toString() });
+  await testComplementMethods(bookContract, owner);
 };
 
 const runMain = async () => {
