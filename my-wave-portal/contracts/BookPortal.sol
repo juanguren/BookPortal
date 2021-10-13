@@ -5,7 +5,15 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./structs/Book.sol";
 
-contract BookPortal { // 0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07
+contract BookPortal { // 0x7AD915106DEAD8F67748FA66060e39793DBBdA9a
+    // A payable user guarantees that it will be able to receive ether via .call{}("")
+    address payable public user;
+
+    constructor() payable { // payable constructors can receive ether
+        console.log("Hello! This is the BookPortal Contract!");
+        user = payable(msg.sender);
+    }
+
     // state elements 
     uint256 totalBooks; 
     mapping(address => uint256) public bookMap;
@@ -15,10 +23,6 @@ contract BookPortal { // 0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07
 
     Book[] public books; // Struct-like array
 
-    constructor() {
-        console.log("Hello! This is BookPortal!");
-    }
-
     function shareBook(string memory book_name) public {
         totalBooks += 1;
 
@@ -27,15 +31,26 @@ contract BookPortal { // 0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07
         userBook += 1;
         bookMap[msg.sender] = userBook;
         
-        this.handleBookRecords(book_name);
+        handleBookRecords(book_name);
+        this.fundingOperations();
     }
 
-    function handleBookRecords(string memory book_name) public {
+    function handleBookRecords(string memory book_name) private {
         // Save user-generated message as struct
-        books.push(Book(msg.sender, book_name, block.timestamp));
+        books.push(Book(user, book_name, block.timestamp));
 
-        // Event emitted: Data is propagated to be stored on transaction logs
-        emit NewBook(msg.sender, block.timestamp, book_name);
+        // Event emitted: Data is propagated to be stored on transaction logs (EVM)
+        emit NewBook(user, block.timestamp, book_name);
+    }
+
+    function fundingOperations() public payable {
+        uint256 prizeAmount = 0.0001 ether; // Fixed
+        require(
+            prizeAmount <= address(this).balance,
+            "Withdraw request exceed contract's funds!"
+        );
+        (bool success, ) = (user).call{value: prizeAmount}(""); // sends ether
+        require(success, "Failed to withdraw funds from contract.");
     }
 
     function getTotalBookData() public view returns (Book[] memory) {
@@ -48,6 +63,10 @@ contract BookPortal { // 0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07
 
     function getBookCountPerUser(address userAddress) public view returns (uint256) {
         return bookMap[userAddress];
+    }
+
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
     }
 }
 

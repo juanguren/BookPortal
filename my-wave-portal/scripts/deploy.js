@@ -6,9 +6,11 @@ const main = async () => {
     `Account present balance: ${(await deployer.getBalance()).toString()}`
   );
 
-  const Contract = await hre.ethers.getContractFactory('BookPortal'); // Calling our wave contract
-  const contract = await Contract.deploy(); // Starts building local network for deploy
-  await contract.deployed(); // Waits until deployoment
+  const Contract = await hre.ethers.getContractFactory('BookPortal');
+  const contract = await Contract.deploy({
+    value: hre.ethers.utils.parseEther('0.1'),
+  }); // funded
+  await contract.deployed(); // Waits until deployment
 
   console.log(`BookPortal address: ${contract.address}`); // Address of the deployed contract
 };
