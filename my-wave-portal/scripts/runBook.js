@@ -1,9 +1,18 @@
-const { testComplementMethods } = require('./modules/book_methods');
+const {
+  testComplementMethods,
+  checkForBalance,
+} = require('./modules/book_methods');
 
 const main = async () => {
   const bookContractFactory = await hre.ethers.getContractFactory('BookPortal');
-  const bookContract = await bookContractFactory.deploy();
-  await bookContract.deployed();
+  // Funding the contract with a parsed ammount (in ether)
+  const bookContract = await bookContractFactory.deploy({
+    value: hre.ethers.utils.parseEther('0.1'),
+  });
+  await bookContract.deployed(); // promise
+
+  // This method asks the contract for its balance
+  console.log(await checkForBalance(bookContract));
 
   let shareBookTxn = await bookContract.shareBook('Ficciones');
   await shareBookTxn.wait();
@@ -18,6 +27,8 @@ const main = async () => {
   randomBook.wait();
 
   await testComplementMethods(bookContract, owner);
+
+  console.log(await checkForBalance(bookContract)); // Check again to get the change
 };
 
 const runMain = async () => {
