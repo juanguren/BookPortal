@@ -20,11 +20,11 @@ const testComplementMethods = async (contract, owner) => {
 
 const checkForBalance = async (contract) => {
   try {
-    const foundBalance = await Headers.ethers.provider.getBalance(
-      contract.address
-    );
+    const ethBalance = await hre.ethers.provider.getBalance(contract.address);
+    const weiBalance = await contract.getBalance();
     return {
-      balance: hre.ethers.utils.formatEther(foundBalance),
+      eth: hre.ethers.utils.formatEther(ethBalance),
+      wei: weiBalance.toString(),
     };
   } catch (error) {
     return error;
