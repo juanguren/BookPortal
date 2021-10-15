@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import config from '../utils/contract_config.json';
 
-const contractAddress = '0xa66a3916bCAB115296b1Ec56635d9c646dcc9A07';
+const contractAddress = '0x7AD915106DEAD8F67748FA66060e39793DBBdA9a';
 
 const connection = async () => {
   const { ethereum: eth } = window;

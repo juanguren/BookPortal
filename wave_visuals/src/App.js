@@ -3,6 +3,7 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import BookResults from './components/BookResults';
 import { connection } from './modules/contract';
+import web3 from 'web3';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
@@ -87,7 +88,14 @@ function App() {
       console.log('Mining...');
       await bookTxn.wait(); // Waits while the computation is executed by miners
       setBookTxnHash(bookTxn.hash);
-      console.log(`Mined -- ${bookTxn.hash}`);
+
+      const balance = await bookContract.getBalance();
+      const ethBalance = web3.utils.fromWei(balance.toString(), 'ether');
+
+      console.log({
+        message: `Mined -- ${bookTxn.hash}`,
+        contractBalance: ethBalance,
+      });
 
       if (bookTxn.hash) {
         setTxnInProgress(false);
@@ -111,8 +119,9 @@ function App() {
           <div className='header'> Book Portal 📖 </div>
           <h1> Hi! I'm Juan 👋 </h1>
           <div className='bio'>
-            I'm a Software Dev learning Blockchain development! Please connect
-            your Ethereum wallet and share your favorite book with me!
+            I'm a Software Dev learning Blockchain development! I LOVE reading,
+            so please connect your Metamask wallet and share your favorite
+            book(s) with me!
           </div>
           {currentAccount ? (
             <div className='book-results'>
