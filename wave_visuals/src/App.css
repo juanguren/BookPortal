@@ -20,6 +20,21 @@
   font-weight: 600;
 }
 
+.contractData {
+  background: silver;
+  border-radius: 5px;
+}
+
+.contractData ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.contractData ul li {
+  list-style: none;
+}
+
 .bio {
   text-align: center;
   color: gray;

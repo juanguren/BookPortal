@@ -7,6 +7,7 @@ import web3 from 'web3';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
+  const [currentBalance, setCurrentBalance] = useState(0);
   const [txnIsLoading, setTxnInProgress] = useState(false);
   const [txnIsMined, setTxnCompleted] = useState(false);
   const [bookTotals, setBookTotals] = useState(null);
@@ -14,8 +15,9 @@ function App() {
   const [sharedBooks, setSharedBooks] = useState(0);
   const [personalBooks, setPersonalBooks] = useState(0);
   const [bookName, setBookName] = useState('');
+  const [isWinner, setIsWinner] = useState(false);
 
-  const retrieveBookTotals = async () => {
+  const retrieveTotals = async () => {
     const savedBooks = [];
     try {
       const bookContract = await connection();
@@ -23,8 +25,13 @@ function App() {
       const accountBookCount = await bookContract.getBookCountPerUser(
         currentAccount
       );
-
       const getAllBooks = await bookContract.getTotalBookData();
+      const contractBalance = await bookContract.getBalance();
+      const ethBalance = web3.utils.fromWei(
+        contractBalance.toString(),
+        'ether'
+      );
+
       getAllBooks.forEach((book) => {
         savedBooks.push({
           address: book.sender,
@@ -36,6 +43,7 @@ function App() {
       setSharedBooks(bookCount.toString());
       setPersonalBooks(accountBookCount.toString());
       setBookTotals({ currentAccount, savedBooks });
+      setCurrentBalance(Number(ethBalance));
     } catch (error) {
       console.log({ error });
     }
@@ -76,7 +84,7 @@ function App() {
 
   useEffect(() => {
     walletIsConnected();
-    retrieveBookTotals();
+    retrieveTotals();
   });
 
   const shareBook = async (e) => {
@@ -104,8 +112,11 @@ function App() {
         setTxnCompleted(true);
         setBookName('');
 
+        if (ethBalance < currentBalance) setIsWinner(true);
+
         setTimeout(() => {
           setTxnCompleted(false);
+          setIsWinner(false);
         }, 7000);
       }
     } catch (error) {
@@ -119,11 +130,12 @@ function App() {
       <div className='mainContainer'>
         <div className='dataContainer'>
           <div className='header'> Book Portal 📖 </div>
+          {isWinner ? <h3>You win 0.001 eth 🎉</h3> : null}
           <h1> Hi! I'm Juan 👋 </h1>
           <div className='bio'>
-            I'm a Software Dev learning Blockchain development! I LOVE reading,
-            so please connect your Metamask wallet and share your favorite
-            book(s) with me!
+            I'm a Software Dev learning Blockchain development! I also LOVE
+            reading, so please connect your Metamask wallet and share your
+            favorite book(s) with me!
           </div>
           {currentAccount ? (
             <div className='book-results'>
