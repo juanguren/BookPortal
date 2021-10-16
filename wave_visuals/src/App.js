@@ -83,7 +83,9 @@ function App() {
     e.preventDefault();
     try {
       const bookContract = await connection();
-      const bookTxn = await bookContract.shareBook(bookName);
+      const bookTxn = await bookContract.shareBook(bookName, {
+        gasLimit: 300000,
+      });
       setTxnInProgress(true); // Only if metamask's pop-up gets accepted
       console.log('Mining...');
       await bookTxn.wait(); // Waits while the computation is executed by miners

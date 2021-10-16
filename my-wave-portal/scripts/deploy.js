@@ -8,7 +8,7 @@ const main = async () => {
 
   const Contract = await hre.ethers.getContractFactory('BookPortal');
   const contract = await Contract.deploy({
-    value: hre.ethers.utils.parseEther('0.1'),
+    value: hre.ethers.utils.parseEther('1'),
   }); // funded
   await contract.deployed(); // Waits until deployment
 
