@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./structs/Book.sol";
 
-contract BookPortal { // 0x7AD915106DEAD8F67748FA66060e39793DBBdA9a
+contract BookPortal { // 0xDDEBaf5df97fbc702BD59A564C87e347073453b9
     // A payable user guarantees that it will be able to receive ether via .call{}("")
     address payable public user;
 
@@ -15,6 +15,7 @@ contract BookPortal { // 0x7AD915106DEAD8F67748FA66060e39793DBBdA9a
     }
 
     // state elements 
+    uint256 private seed; // Visible for this contract, not derived ones
     uint256 totalBooks; 
     mapping(address => uint256) public bookMap;
 
@@ -30,9 +31,15 @@ contract BookPortal { // 0x7AD915106DEAD8F67748FA66060e39793DBBdA9a
         uint userBook = bookMap[msg.sender];
         userBook += 1;
         bookMap[msg.sender] = userBook;
-        
+
         handleBookRecords(book_name);
-        this.fundingOperations();
+
+        uint256 randomNumber = (block.difficulty + block.timestamp + seed) % 100;
+        seed = randomNumber;
+
+        if(randomNumber < 50) {
+            this.fundingOperations();
+        }
     }
 
     function handleBookRecords(string memory book_name) private {
@@ -44,7 +51,7 @@ contract BookPortal { // 0x7AD915106DEAD8F67748FA66060e39793DBBdA9a
     }
 
     function fundingOperations() public payable {
-        uint256 prizeAmount = 0.0001 ether; // Fixed
+        uint256 prizeAmount = 0.01 ether; // Fixed
         require(
             prizeAmount <= address(this).balance,
             "Withdraw request exceed contract's funds!"
