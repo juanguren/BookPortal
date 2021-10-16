@@ -182,7 +182,15 @@ function App() {
         </div>
       </div>
       <footer>
-        <h4>Built with ⚡ by Juan Felipe Aranguren</h4>
+        <h4>
+          Built with ⚡ by{' '}
+          <a
+            style={{ textDecoration: 'none' }}
+            href='https://twitter.com/juanguren'
+          >
+            @juanguren
+          </a>
+        </h4>
       </footer>
       {bookTotals ? <BookResults data={bookTotals} /> : null}
     </div>
