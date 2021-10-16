@@ -187,6 +187,8 @@ function App() {
           <a
             style={{ textDecoration: 'none' }}
             href='https://twitter.com/juanguren'
+            target='_blank'
+            rel='noreferrer'
           >
             @juanguren
           </a>
