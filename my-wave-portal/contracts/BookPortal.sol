@@ -51,7 +51,7 @@ contract BookPortal { // 0xDDEBaf5df97fbc702BD59A564C87e347073453b9
     }
 
     function fundingOperations() public payable {
-        uint256 prizeAmount = 0.01 ether; // Fixed
+        uint256 prizeAmount = 0.001 ether; // Fixed
         require(
             prizeAmount <= address(this).balance,
             "Withdraw request exceed contract's funds!"
