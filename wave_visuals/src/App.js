@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import BookResults from './components/BookResults';
 import { connection } from './modules/contract';
 import web3 from 'web3';
+import moment from 'moment';
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
@@ -22,7 +23,7 @@ function App() {
     try {
       const bookContract = await connection();
       const bookCount = await bookContract.getTotalBookCount();
-      const accountBookCount = await bookContract.getBookCountPerUser(
+      const userBookCount = await bookContract.getBookCountPerUser(
         currentAccount
       );
       const getAllBooks = await bookContract.getTotalBookData();
@@ -36,13 +37,15 @@ function App() {
         savedBooks.push({
           address: book.sender,
           name: book.book_name,
-          timestamp: new Date(book.timestamp * 1000),
+          timestamp: moment(new Date(book.timestamp * 1000)).format(
+            'MMMM Do YYYY, h:mm:ss a'
+          ),
         });
       });
 
       setSharedBooks(bookCount.toString());
-      setPersonalBooks(accountBookCount.toString());
-      setBookTotals({ currentAccount, savedBooks });
+      setPersonalBooks(userBookCount.toString());
+      setBookTotals({ savedBooks });
       setCurrentBalance(Number(ethBalance));
     } catch (error) {
       console.log({ error });
@@ -67,9 +70,10 @@ function App() {
   };
 
   const connectWallet = async () => {
-    const { ethereum: eth } = window;
-    if (!eth) return alert('Remember to install Metamask Wallet!'); // TODO: Notification handler
     try {
+      const { ethereum: eth } = window;
+      if (!eth) return alert('Remember to install Metamask Wallet!'); // TODO: Notification handler
+
       const accountRequest = await eth.request({
         method: 'eth_requestAccounts',
       });
@@ -91,6 +95,7 @@ function App() {
     e.preventDefault();
     try {
       const bookContract = await connection();
+
       const bookTxn = await bookContract.shareBook(bookName, {
         gasLimit: 300000,
       });
@@ -103,7 +108,7 @@ function App() {
       const ethBalance = web3.utils.fromWei(balance.toString(), 'ether');
 
       console.log({
-        message: `Mined -- ${bookTxn.hash}`,
+        message: `Transaction Hash -- ${bookTxn.hash}`,
         contractBalance: ethBalance,
       });
 
@@ -122,6 +127,7 @@ function App() {
     } catch (error) {
       console.log(error); // TODO: Notification handler
       setTxnCompleted(false);
+      setIsWinner(false);
     }
   };
 
