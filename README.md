@@ -1,7 +1,7 @@
-# Book Portal ⚡
-Share books on the Blockchain!
+# Book Portal ⚡📖
+Save and share books on the Blockchain!
 
-## Stack 
+## Stack:
 
 - Solidity
 - Node
