@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import config from '../utils/contract_config.json';
+import moment from 'moment';
 
 const contractAddress = '0xB9b182843303968079E231146F61713D76ABE6Bd';
 
@@ -18,4 +19,18 @@ const connection = async () => {
   }
 };
 
-export { connection, contractAddress };
+const eventListener = (contract) => {
+  contract.on('NewBook', (from, timestamp, book) => {
+    return {
+      address: from,
+      name: book,
+      timestamp: moment(new Date(timestamp * 1000)).format(
+        'MMMM Do YYYY, h:mm:ss a'
+      ),
+    };
+  });
+};
+
+//setBookTotals(previousState => [...previousState, eventListenewr]);
+
+export { connection, contractAddress, eventListener };
