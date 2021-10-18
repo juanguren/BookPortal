@@ -22,7 +22,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 const { ALCHEMY_KEY, METAMASK_KEY } = process.env;
 
 module.exports = {
-  solidity: '0.8.4',
+  solidity: '0.8.0',
   networks: {
     rinkeby: {
       url: ALCHEMY_KEY, // Alchemy PK
