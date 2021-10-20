@@ -93,6 +93,7 @@ function App() {
 
   const shareBook = async (e) => {
     e.preventDefault();
+    if (bookName.length <= 2) return;
     try {
       const bookContract = await connection();
 
