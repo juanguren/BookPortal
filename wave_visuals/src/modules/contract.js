@@ -12,7 +12,8 @@ const connection = async () => {
     const provider = new ethers.providers.Web3Provider(eth);
     // Account for signing the transaction. Can be used to sign messages and transactions
     const signer = provider.getSigner();
-    // Connecting to our whole contract
+
+    // Connecting to the whole contract
     return new ethers.Contract(contractAddress, abi, signer);
   } catch (error) {
     return error;

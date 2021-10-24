@@ -14,7 +14,7 @@ function BookResults(props) {
           {savedBooks.map((book, index) => {
             return (
               <ul key={index}>
-                <li>Address: {book.address}</li>
+                <li>Sender: {book.address}</li>
                 <li style={{ fontWeight: 'bold' }}>Book Name: {book.name}</li>
                 <li>Shared on: {book.timestamp.toString()}</li>
               </ul>

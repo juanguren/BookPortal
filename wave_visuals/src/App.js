@@ -6,6 +6,9 @@ import { connection } from './modules/contract';
 import web3 from 'web3';
 import { createAlchemyWeb3 } from '@alch/alchemy-web3';
 import moment from 'moment';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 function App() {
   const [currentAccount, setCurrentAccount] = useState('');
@@ -94,10 +97,12 @@ function App() {
 
   const shareBook = async (e) => {
     e.preventDefault();
-    const web3 = createAlchemyWeb3(process.env.ALCHEMY_KEY);
+    const { REACT_APP_ALCHEMY_KEY: ALCHEMY_KEY } = process.env;
     if (bookName.length <= 2) return;
+
     try {
       const bookContract = await connection();
+      const web3 = createAlchemyWeb3(ALCHEMY_KEY);
 
       const bookTxn = await bookContract.shareBook(bookName, {
         gasLimit: 300000,
@@ -110,14 +115,15 @@ function App() {
       const balance = await bookContract.getBalance();
       const ethBalance = web3.utils.fromWei(balance.toString(), 'ether');
 
-      console.log({
-        message: `Transaction Hash -- ${bookTxn.hash}`,
-        contractBalance: ethBalance,
-      });
-
       if (bookTxn.hash) {
-        const block = await web3.eth.getBlockNumber();
-        console.log({ block });
+        const blockNumber = await web3.eth.getBlockNumber();
+
+        console.log({
+          hash: bookTxn.hash,
+          contractBalance: ethBalance,
+          blockNumber,
+        });
+
         setTxnInProgress(false);
         setTxnCompleted(true);
         setBookName('');
