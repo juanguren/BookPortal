@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./structs/Book.sol";
 
-contract BookPortal { // 0xDDEBaf5df97fbc702BD59A564C87e347073453b9
+contract BookPortal { // 0xACD6317D2758bf692755D26e2C8037D3aE2109B7
     // A payable user guarantees that it will be able to receive ether via .call{}("")
     address payable public user;
 
@@ -68,8 +68,8 @@ contract BookPortal { // 0xDDEBaf5df97fbc702BD59A564C87e347073453b9
         return totalBooks;
     }
 
-    function getBookCountPerUser(address userAddress) public view returns (uint256) {
-        return bookMap[userAddress];
+    function getBookCountPerUser(address userAddress) public view returns (uint256 count) {
+        count = bookMap[userAddress]; // return variable
     }
 
     function getBalance() public view returns (uint) {
