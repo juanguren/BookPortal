@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import BookResults from './components/BookResults';
 import { connection } from './modules/contract';
 import web3 from 'web3';
+import { createAlchemyWeb3 } from '@alch/alchemy-web3';
 import moment from 'moment';
 
 function App() {
@@ -93,6 +94,7 @@ function App() {
 
   const shareBook = async (e) => {
     e.preventDefault();
+    const web3 = createAlchemyWeb3(process.env.ALCHEMY_KEY);
     if (bookName.length <= 2) return;
     try {
       const bookContract = await connection();
@@ -114,6 +116,8 @@ function App() {
       });
 
       if (bookTxn.hash) {
+        const block = await web3.eth.getBlockNumber();
+        console.log({ block });
         setTxnInProgress(false);
         setTxnCompleted(true);
         setBookName('');
