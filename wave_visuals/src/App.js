@@ -156,6 +156,30 @@ function App() {
             connect your <span style={{ fontWeight: 'bold' }}> Metamask </span>{' '}
             wallet and share your favorite book(s)!
           </p>
+
+          {txnIsLoading ? (
+            <h4 style={{ color: 'white', background: 'crimson' }}>
+              Mining! Please wait...
+            </h4>
+          ) : null}
+
+          {txnIsMined ? (
+            <div>
+              <h4>
+                Received! Your book has been{' '}
+                <a
+                  href={`https://rinkeby.etherscan.io/tx/${bookTxnHash}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  id='etherscan_link'
+                >
+                  recorded
+                </a>{' '}
+                on the blockchain!
+              </h4>
+            </div>
+          ) : null}
+
           {currentAccount ? (
             <div className='book-results'>
               <div>
@@ -184,24 +208,6 @@ function App() {
                 Share Book!
               </button>
             </form>
-          ) : null}
-
-          {txnIsLoading ? <h4>Saving...</h4> : null}
-          {txnIsMined ? (
-            <div>
-              <h4>
-                Received! Your book has been{' '}
-                <a
-                  href={`https://rinkeby.etherscan.io/tx/${bookTxnHash}`}
-                  target='_blank'
-                  rel='noreferrer'
-                  id='etherscan_link'
-                >
-                  recorded
-                </a>{' '}
-                on the blockchain!
-              </h4>
-            </div>
           ) : null}
 
           {currentAccount ? null : (
