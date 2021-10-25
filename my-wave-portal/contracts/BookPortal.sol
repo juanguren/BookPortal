@@ -44,10 +44,10 @@ contract BookPortal { // 0xACD6317D2758bf692755D26e2C8037D3aE2109B7
 
     function handleBookRecords(string memory book_name) private {
         // Save user-generated message as struct
-        books.push(Book(user, book_name, block.timestamp));
+        books.push(Book(msg.sender, book_name, block.timestamp));
 
         // Event emitted: Data is propagated to be stored on transaction logs (EVM)
-        emit NewBook(user, block.timestamp, book_name);
+        emit NewBook(msg.sender, block.timestamp, book_name);
     }
 
     function fundingOperations() public payable {
@@ -56,7 +56,7 @@ contract BookPortal { // 0xACD6317D2758bf692755D26e2C8037D3aE2109B7
             prizeAmount <= address(this).balance,
             "Withdraw request exceed contract's funds!"
         );
-        (bool success, ) = (user).call{value: prizeAmount}(""); // sends ether
+        (bool success, ) = (msg.sender).call{value: prizeAmount}(""); // sends ether
         require(success, "Failed to withdraw funds from contract.");
     }
 
