@@ -36,9 +36,10 @@
 }
 
 .bio {
-  text-align: center;
+  text-align: justify;
   color: gray;
   margin-top: 1em;
+  line-height: 23px;
 }
 
 .book-results {

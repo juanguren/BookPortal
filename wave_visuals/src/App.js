@@ -149,19 +149,13 @@ function App() {
           <div className='header'> Book Portal 📖 </div>
           {isWinner ? <h3>You win 0.001 eth 🎉</h3> : null}
           <h1> Hi! I'm Juan 👋 </h1>
-          <div className='bio'>
-            I'm a Software Dev learning Blockchain development! I also LOVE
-            reading, so please connect (or{' '}
-            <a
-              style={{ textDecoration: 'none' }}
-              href='https://metamask.io/download.html'
-              target='_blank'
-              rel='noreferrer'
-            >
-              download
-            </a>
-            ) your Metamask wallet and share your favorite book(s) with me!
-          </div>
+          <p className='bio'>
+            I'm a Software Dev learning Blockchain development. I LOVE reading,
+            so I created BookPortal, an app that lets you share books with me
+            (and everyone else). On the Blockchain! <br /> To use it, please
+            connect your <span style={{ fontWeight: 'bold' }}> Metamask </span>{' '}
+            wallet and share your favorite book(s)!
+          </p>
           {currentAccount ? (
             <div className='book-results'>
               <div>
