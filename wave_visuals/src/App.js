@@ -151,8 +151,16 @@ function App() {
           <h1> Hi! I'm Juan 👋 </h1>
           <div className='bio'>
             I'm a Software Dev learning Blockchain development! I also LOVE
-            reading, so please connect your Metamask wallet and share your
-            favorite book(s) with me!
+            reading, so please connect (or{' '}
+            <a
+              style={{ textDecoration: 'none' }}
+              href='https://metamask.io/download.html'
+              target='_blank'
+              rel='noreferrer'
+            >
+              download
+            </a>
+            ) your Metamask wallet and share your favorite book(s) with me!
           </div>
           {currentAccount ? (
             <div className='book-results'>
