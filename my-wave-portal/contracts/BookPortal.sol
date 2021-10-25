@@ -7,11 +7,10 @@ import "./structs/Book.sol";
 
 contract BookPortal { // 0xACD6317D2758bf692755D26e2C8037D3aE2109B7
     // A payable user guarantees that it will be able to receive ether via .call{}("")
-    address payable public user;
-
+    //address payable public user;
     constructor() payable { // payable constructors can receive ether
-        console.log("Hello! This is the BookPortal Contract!");
-        user = payable(msg.sender);
+        console.log("Hello! This is the BookPortal Contract!");  
+        //user = payable(msg.sender);
     }
 
     // state elements 
