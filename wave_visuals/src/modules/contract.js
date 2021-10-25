@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import config from '../utils/contract_config.json';
 import moment from 'moment';
 
-const contractAddress = '0xACD6317D2758bf692755D26e2C8037D3aE2109B7';
+const contractAddress = '0xa863a2C59937ca6E8FF733F462D69A2C2903D979';
 
 const connection = async () => {
   const { ethereum: eth } = window;
