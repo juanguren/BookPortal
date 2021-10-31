@@ -36,7 +36,7 @@ function App() {
         contractBalance.toString(),
         'ether'
       );
-
+      //console.log({ getAllBooks });
       getAllBooks.forEach((book) => {
         savedBooks.push({
           address: book.sender,
@@ -139,6 +139,8 @@ function App() {
       console.log(error); // TODO: Notification handler
       setTxnCompleted(false);
       setIsWinner(false);
+      setBookName('');
+      setTxnInProgress(false);
     }
   };
 
