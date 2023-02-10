@@ -1,0 +1,6 @@
+{
+  "id": "cldxs0x360000kv08in3wprwx",
+  "name": "book-portal",
+  "distDir": "./build",
+  "buildCommand": "npm run build"
+}
